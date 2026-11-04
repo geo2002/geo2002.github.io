@@ -118,6 +118,8 @@ section[id]{scroll-margin-top:5rem}
 .note{font-size:.92rem;color:var(--muted)}
 
 /* project "screenshots" drawn in CSS */
+.shot-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:left top;display:block}
+.v-shot .shot-img{object-position:left top}
 .mock{position:absolute;inset:0;display:flex;flex-direction:column;padding:1.4rem 1.2rem 4.5rem;gap:.7rem}
 .mock .chrome{display:flex;gap:.3rem}
 .mock .chrome i{width:.45rem;height:.45rem;border-radius:50%;background:currentColor;opacity:.35}
@@ -382,12 +384,12 @@ footer .wrap{padding-block:2rem 2.5rem;display:flex;flex-wrap:wrap;justify-conte
 
   /* ---------- Projects ---------- */
   var projects = [
-    {title:'Geo T George', kind:'Personal website', tag:'Live', cls:'p1', url:'https://geo2002.github.io/',
+    {title:'Geo T George', kind:'Personal website', tag:'Live', cls:'p1', img:'thumb.png', alt:'Homepage of Geo T George\u2019s portfolio site', url:'https://geo2002.github.io/',
      desc:'My own site: who I am, what I build and how to reach me.',
      points:['Built with AI coding tools and hosted on GitHub Pages','Works in light and dark mode','Checked on phone and desktop']},
-    {title:'Slice & Co', kind:'Pizza takeout site', tag:'Concept', cls:'p2',
-     desc:'A takeout site that puts the menu, hours and order button on the first screen.',
-     points:['Order and call buttons always in reach on a phone','Menu grouped the way customers ask for it','Hours and location answered before anyone has to call']},
+    {title:'Yonge Slice', kind:'Pizza shop website', tag:'Live', cls:'p2', img:'yonge-slice/thumb.png', alt:'Homepage of the Yonge Slice pizza shop site', url:'https://geo2002.github.io/yonge-slice/',
+     desc:'A phone-first site for a neighbourhood pizza shop, with a full menu and a working order builder. Yonge Slice is a fictional brand I designed from five years of managing a busy pizza store.',
+     points:['Menu tabs with size and crust pickers that update the price','Order bar that sticks to the bottom of the phone screen','Live open or closed status in Toronto time, plus hours and directions']},
     {title:'Northline Dental', kind:'Clinic booking page', tag:'Concept', cls:'p3',
      desc:'A calm booking page for a neighbourhood clinic, with open times shown up front.',
      points:['Booking calendar on the first screen','Insurance and new-patient questions answered in plain words','Large tap targets for older patients']},
@@ -396,6 +398,7 @@ footer .wrap{padding-block:2rem 2.5rem;display:flex;flex-wrap:wrap;justify-conte
      points:['A single action: order a bouquet','Delivery cut-off time shown next to the button','Photos sized to load fast on mobile data']}
   ];
   function mock(p){
+    if (p.img) return '<img class="shot-img" src="'+p.img+'" alt="" loading="lazy" decoding="async" width="1200" height="628">';
     if (p.cls==='p1') return '<div class="mock p1"><div class="chrome"><i></i><i></i><i></i></div><div class="big">Geo T<br>George</div><div class="b" style="width:70%"></div><div class="b" style="width:55%"></div><div class="row"><span class="cta"></span></div><div class="row" style="margin-top:auto"><span class="tile"></span><span class="tile"></span><span class="tile"></span></div></div>';
     if (p.cls==='p2') return '<div class="mock p2"><div class="chrome"><i></i><i></i><i></i></div><div class="t" style="width:55%"></div><div class="b" style="width:40%"></div><div class="hero2"></div><div class="row"><span class="cta"></span><span class="cta" style="background:transparent;border:1px solid currentColor;opacity:.6"></span></div></div>';
     if (p.cls==='p3') return '<div class="mock p3"><div class="chrome"><i></i><i></i><i></i></div><div class="t" style="width:60%"></div><div class="b" style="width:45%"></div><div class="cal">'+Array.from({length:21},function(_,k){return '<i'+([3,9,10,16].indexOf(k)>-1?' class="on"':'')+'></i>';}).join('')+'</div><div class="row"><span class="tile"></span><span class="tile"></span></div><span class="cta"></span></div>';
