@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:light}body{margin:0}img{max-width:100%}</style>
+<title>Yonge Slice</title>
+<meta property="og:title" content="Yonge Slice – Pizza Shop Website (Concept)">
+<meta property="og:description" content="A phone-first pizza shop site with a working order builder. Designed and built by Geo T George.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://geo2002.github.io/yonge-slice/">
+<meta property="og:image" content="https://geo2002.github.io/yonge-slice/preview.png">
+<meta name="description" content="Yonge Slice: hand-stretched pizza by the slice and by the pie on Yonge Street, Toronto. A fictional pizza shop designed by Geo T George.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap">
+<style>
+/* Layout: mobile-first single column; a floating pill navbar, a block-colour hero with a drawn pizza, tabbed menu cards with Add buttons, a snap-scrolling reviews row, and a location/hours block. On phones an order bar sticks to the bottom. */
+:root{
+  --bg:#FFF7ED; --surface:#FFFFFF; --ink:#1C1917; --muted:#57534E; --line:#F3E1D2; --soft:#FDEEDF;
+  --primary:#EA580C; --on-primary:#1C1917; --primary-soft:#FFE4CF;
+  --crust:#E9A15A; --sauce:#C2361B; --cheese:#F8D27A; --basil:#15803D; --star:#B45309;
+  --display:"Fredoka","Trebuchet MS",system-ui,sans-serif;
+  --body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --wrap:70rem; --ease:cubic-bezier(.25,.46,.45,.94); --bar-h:0px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#17120F; --surface:#211A16; --ink:#FBF4EE; --muted:#C9BDB3; --line:#3A2D25; --soft:#2A201B;
+  --primary:#FB7A35; --on-primary:#1C1917; --primary-soft:#3B2417;
+  --crust:#D9914C; --sauce:#D9442A; --cheese:#F3C964; --basil:#4ADE80; --star:#FBBF24; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#17120F; --surface:#211A16; --ink:#FBF4EE; --muted:#C9BDB3; --line:#3A2D25; --soft:#2A201B;
+  --primary:#FB7A35; --on-primary:#1C1917; --primary-soft:#3B2417;
+  --crust:#D9914C; --sauce:#D9442A; --cheese:#F3C964; --basil:#4ADE80; --star:#FBBF24; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:1.0625rem;line-height:1.6;-webkit-font-smoothing:antialiased;padding-bottom:var(--bar-h)}
+h1,h2,h3{font-family:var(--display);margin:0;line-height:1.05;text-wrap:balance;font-weight:600}
+h2{font-size:clamp(2rem,6vw,3rem)}
+h3{font-size:1.2rem}
+p{margin:0}
+a{color:inherit}
+button{font:inherit}
+:focus-visible{outline:3px solid var(--primary);outline-offset:3px;border-radius:8px}
+.wrap{max-width:var(--wrap);margin-inline:auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+.label{font-family:var(--display);font-weight:600;font-size:.9rem;letter-spacing:.06em;text-transform:uppercase;color:var(--primary)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:48px;padding:0 1.3rem;border-radius:999px;font-weight:800;text-decoration:none;cursor:pointer;border:2px solid transparent;transition:transform .2s var(--ease),background-color .2s var(--ease),border-color .2s var(--ease)}
+.btn svg{width:1.15rem;height:1.15rem;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.btn-primary{background:var(--primary);color:var(--on-primary)}
+.btn-primary:hover{transform:translateY(-2px)}
+.btn-ghost{background:transparent;border-color:var(--ink);color:var(--ink)}
+.btn-ghost:hover{background:var(--ink);color:var(--bg)}
+section[id]{scroll-margin-top:6rem}
+
+/* navbar (adapted from 21st "Navbar 1": floating, rounded, responsive) */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+.nav-shell{position:sticky;top:calc(env(safe-area-inset-top,0px) + 10px);z-index:20;padding-top:10px}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:.75rem;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:999px;padding:.4rem .4rem .4rem 1rem;box-shadow:0 6px 24px -12px rgba(28,25,23,.25)}
+.brand{display:flex;align-items:center;gap:.5rem;font-family:var(--display);font-weight:700;font-size:1.2rem;text-decoration:none;white-space:nowrap}
+.brand svg{width:1.7rem;height:1.7rem}
+.links{display:none;gap:.25rem;list-style:none;margin:0;padding:0}
+.links a{display:inline-flex;align-items:center;min-height:44px;padding:0 .9rem;border-radius:999px;text-decoration:none;font-weight:700;color:var(--muted);transition:background-color .2s var(--ease),color .2s var(--ease)}
+.links a:hover{background:var(--soft);color:var(--ink)}
+.nav-right{display:flex;align-items:center;gap:.4rem}
+.nav .btn{min-height:44px;padding:0 1rem}
+.menu-btn{display:inline-grid;place-items:center;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.menu-btn svg{width:1.2rem;height:1.2rem;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
+.drawer{margin-top:.5rem;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:.5rem;box-shadow:0 12px 30px -16px rgba(28,25,23,.35)}
+.drawer a{display:flex;align-items:center;min-height:48px;padding:0 1rem;border-radius:14px;text-decoration:none;font-weight:700}
+.drawer a:hover{background:var(--soft)}
+@media (min-width:860px){.links{display:flex}.menu-btn,.drawer{display:none!important}}
+@media (max-width:380px){.nav .btn .txt{display:none}}
+
+/* hero */
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1fr);gap:2rem;padding-block:2.5rem 3.5rem;align-items:center}
+.hero-text{display:flex;flex-direction:column;gap:1.25rem;min-width:0}
+.open{display:inline-flex;align-items:center;gap:.55rem;width:fit-content;padding:.4rem .9rem;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-weight:700;font-size:.95rem}
+.open .dot{width:.6rem;height:.6rem;border-radius:50%;background:var(--basil);box-shadow:0 0 0 4px color-mix(in srgb,var(--basil) 20%,transparent)}
+.open.closed .dot{background:var(--muted);box-shadow:none}
+.hero h1{font-size:clamp(3rem,13vw,6.5rem);font-weight:700;letter-spacing:-.02em;line-height:.92}
+.hero h1 em{font-style:normal;color:var(--primary)}
+.lede{font-size:1.2rem;color:var(--muted);max-width:32ch}
+.ctas{display:flex;flex-wrap:wrap;gap:.75rem}
+.quick{display:flex;flex-wrap:wrap;gap:.5rem 1.25rem;font-weight:700;color:var(--muted);font-size:.98rem}
+.quick span{display:inline-flex;align-items:center;gap:.4rem}
+.quick svg{width:1.1rem;height:1.1rem;fill:none;stroke:var(--primary);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.art{position:relative;max-width:30rem;width:100%;justify-self:center;aspect-ratio:1/1}
+.art .block{position:absolute;inset:6% 0 0 6%;border-radius:40px;background:var(--primary-soft)}
+.art svg.pie{position:absolute;inset:0;width:100%;height:100%}
+.sticker{position:absolute;right:2%;top:6%;background:var(--ink);color:var(--bg);font-family:var(--display);font-weight:600;border-radius:999px;padding:.55rem 1rem;font-size:1rem;transform:rotate(6deg)}
+@media (min-width:860px){.hero .wrap{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);padding-block:4rem 5rem}}
+@media (prefers-reduced-motion:no-preference){.art svg.pie{animation:spin 60s linear infinite}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* strip */
+.strip{background:var(--ink);color:var(--bg)}
+.strip .wrap{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;padding-block:1.5rem}
+.strip div{display:flex;flex-direction:column}
+.strip b{font-family:var(--display);font-size:1.6rem;font-weight:600;font-variant-numeric:tabular-nums}
+.strip span{font-size:.92rem;opacity:.8}
+@media (min-width:860px){.strip .wrap{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+/* sections */
+.sec .wrap{padding-block:clamp(3rem,8vw,5rem);display:flex;flex-direction:column;gap:1.75rem}
+.head{display:flex;flex-direction:column;gap:.5rem;max-width:40rem}
+.head p{color:var(--muted)}
+
+/* menu tabs */
+.tabs{display:flex;gap:.5rem;overflow-x:auto;padding-bottom:.25rem;scrollbar-width:none;margin:0 -4px;padding-inline:4px}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;min-height:44px;padding:0 1.1rem;border-radius:999px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font-weight:800;cursor:pointer;transition:background-color .2s var(--ease),border-color .2s var(--ease)}
+.tab:hover{border-color:var(--primary)}
+.tab[aria-selected="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+
+/* menu cards (adapted from 21st "Menu Item Card": image, name, price, Add button) */
+.grid{display:grid;grid-template-columns:minmax(0,1fr);gap:1rem}
+@media (min-width:560px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:960px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.item{display:grid;grid-template-columns:6.5rem minmax(0,1fr);gap:1rem;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:.85rem;transition:transform .2s var(--ease),border-color .2s var(--ease)}
+.item:hover{transform:translateY(-3px);border-color:var(--primary)}
+.thumb{width:6.5rem;aspect-ratio:1/1;border-radius:16px;background:var(--soft);display:grid;place-items:center;overflow:hidden}
+.thumb svg{width:86%;height:86%}
+.item-body{display:flex;flex-direction:column;gap:.3rem;min-width:0}
+.item-body p{color:var(--muted);font-size:.95rem;line-height:1.45}
+.item-foot{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-top:.35rem}
+.price{font-family:var(--display);font-weight:600;font-size:1.2rem;font-variant-numeric:tabular-nums}
+.size{font-size:.85rem;color:var(--muted);font-weight:700}
+.add{min-height:44px;min-width:76px;padding:0 1rem;border-radius:999px;border:2px solid var(--ink);background:transparent;color:var(--ink);font-weight:800;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.35rem;transition:background-color .2s var(--ease),color .2s var(--ease)}
+.add:hover{background:var(--ink);color:var(--bg)}
+.add.in{background:var(--primary);border-color:var(--primary);color:var(--on-primary)}
+.qty{display:inline-flex;align-items:center;gap:.25rem;border:2px solid var(--primary);border-radius:999px;background:var(--primary-soft)}
+.qty button{width:40px;height:40px;border:0;background:transparent;color:var(--ink);font-weight:800;font-size:1.2rem;cursor:pointer;border-radius:50%}
+.qty button:hover{background:var(--primary);color:var(--on-primary)}
+.qty output{min-width:1.4rem;text-align:center;font-weight:800;font-variant-numeric:tabular-nums}
+.pick{display:grid;grid-template-columns:minmax(0,1fr);gap:.4rem;margin-top:.25rem}
+.pick select{font:inherit;font-size:.9rem;font-weight:700;color:var(--ink);background:var(--soft);border:1px solid var(--line);border-radius:999px;min-height:40px;padding:0 .6rem;width:100%;min-width:0;text-overflow:ellipsis;cursor:pointer}
+.pick select:hover{border-color:var(--primary)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.tag{display:inline-block;font-size:.75rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:.1rem .5rem;border-radius:999px;background:var(--primary-soft);color:var(--ink);margin-left:.35rem;vertical-align:middle}
+
+/* order bar + panel */
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:25;padding:.6rem max(16px, env(safe-area-inset-right, 0px)) calc(.6rem + env(safe-area-inset-bottom,0px)) max(16px, env(safe-area-inset-left, 0px));background:var(--surface);border-top:1px solid var(--line);box-shadow:0 -8px 24px -16px rgba(28,25,23,.35)}
+.bar .btn{width:100%;max-width:var(--wrap);margin-inline:auto;display:flex;justify-content:space-between}
+@media (min-width:860px){.bar{left:auto;right:max(24px, env(safe-area-inset-right, 0px));bottom:calc(24px + env(safe-area-inset-bottom,0px));border:1px solid var(--line);border-radius:999px;padding:.4rem}.bar .btn{width:auto;gap:1.25rem}}
+dialog.order{width:min(30rem,calc(100% - 32px));max-height:calc(100% - 32px);border:1px solid var(--line);border-radius:24px;background:var(--surface);color:var(--ink);padding:0}
+dialog.order::backdrop{background:rgba(28,25,23,.6)}
+.o-in{padding:1.5rem;display:flex;flex-direction:column;gap:1rem}
+.o-top{display:flex;justify-content:space-between;align-items:center}
+.o-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.6rem}
+.o-list li{display:flex;justify-content:space-between;gap:1rem;border-bottom:1px dashed var(--line);padding-bottom:.6rem}
+.o-list span:last-child{font-variant-numeric:tabular-nums;font-weight:700}
+.o-tot{display:flex;justify-content:space-between;font-family:var(--display);font-weight:600;font-size:1.3rem}
+.o-note{font-size:.92rem;color:var(--muted);background:var(--soft);border-radius:14px;padding:.8rem 1rem}
+.x{display:inline-grid;place-items:center;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.x svg{width:1.1rem;height:1.1rem;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
+
+/* about */
+.about{display:grid;grid-template-columns:minmax(0,1fr);gap:2rem;align-items:center}
+.about-text{display:flex;flex-direction:column;gap:1rem;max-width:58ch}
+.about-text p{color:var(--muted)}
+.about-text p:first-of-type{color:var(--ink);font-size:1.2rem}
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem}
+.steps li{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:1rem;display:flex;flex-direction:column;gap:.25rem;min-width:0}
+.steps b{font-family:var(--display);font-size:1.6rem;font-weight:600;color:var(--primary);font-variant-numeric:tabular-nums}
+.steps span{font-size:.9rem;color:var(--muted);line-height:1.35}
+@media (min-width:860px){.sec .wrap.about{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+
+/* reviews (adapted from 21st "Testimonials Section": snap-scrolling quote cards with stars, arrows and dots) */
+.rev-head{display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;flex-wrap:wrap}
+.score{display:flex;align-items:center;gap:.75rem}
+.score b{font-family:var(--display);font-size:2.6rem;font-weight:600;line-height:1}
+.stars{display:inline-flex;gap:2px;color:var(--star)}
+.stars svg{width:1.1rem;height:1.1rem;fill:currentColor}
+.score small{display:block;color:var(--muted);font-size:.9rem}
+.rail{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(17rem,85%);gap:1rem;overflow-x:auto;scroll-snap-type:x mandatory;padding:.25rem .25rem 1rem;margin-inline:-.25rem;scrollbar-width:thin}
+@media (min-width:860px){.rail{grid-auto-columns:calc((100% - 2rem)/3)}}
+.quote{scroll-snap-align:start;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:1.4rem;display:flex;flex-direction:column;gap:.85rem;min-width:0}
+.quote p{font-size:1.05rem}
+.who{display:flex;align-items:center;gap:.7rem;margin-top:auto}
+.av{width:2.6rem;height:2.6rem;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:600;background:var(--primary-soft);color:var(--ink)}
+.who small{display:block;color:var(--muted);font-size:.88rem}
+.pager{display:flex;align-items:center;gap:.5rem}
+.pager .x{width:44px;height:44px}
+.dots{display:flex;gap:.4rem;margin-left:.5rem}
+.dots button{width:12px;height:12px;border-radius:50%;border:0;padding:0;background:var(--line);cursor:pointer;position:relative}
+.dots button::after{content:"";position:absolute;inset:-16px}
+.dots button[aria-current="true"]{background:var(--primary)}
+.sample{font-size:.88rem;color:var(--muted)}
+
+/* visit */
+.visit{display:grid;grid-template-columns:minmax(0,1fr);gap:1rem}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:1.5rem;display:flex;flex-direction:column;gap:1rem;min-width:0}
+.map{position:relative;border-radius:18px;overflow:hidden;aspect-ratio:16/10;background:var(--soft)}
+.map svg{width:100%;height:100%;display:block}
+.hours{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.hours th,.hours td{text-align:left;padding:.6rem 0;border-bottom:1px solid var(--line);font-weight:600}
+.hours td{text-align:right;color:var(--muted)}
+.hours tr.today th,.hours tr.today td{color:var(--primary);font-weight:800}
+.addr{font-size:1.15rem;font-weight:700}
+.addr small{display:block;color:var(--muted);font-weight:600;font-size:.95rem}
+@media (min-width:860px){.visit{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}}
+
+footer .wrap{padding-block:2rem 3rem;display:flex;flex-direction:column;gap:.5rem;color:var(--muted);font-size:.92rem;border-top:1px solid var(--line)}
+footer b{color:var(--ink)}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+html{scroll-behavior:smooth}
+</style>
+</head>
+<body>
+
+<div class="wrap nav-shell">
+  <nav class="nav" aria-label="Main">
+    <a class="brand" href="#top" aria-label="Yonge Slice home">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 29 27H3Z" fill="var(--cheese)" stroke="var(--crust)" stroke-width="3" stroke-linejoin="round"/><circle cx="14" cy="17" r="2.4" fill="var(--sauce)"/><circle cx="19" cy="22" r="2.2" fill="var(--sauce)"/><circle cx="11" cy="23" r="1.8" fill="var(--sauce)"/></svg>
+      Yonge Slice
+    </a>
+    <ul class="links">
+      <li><a href="#menu">Menu</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#reviews">Reviews</a></li>
+      <li><a href="#visit">Hours &amp; location</a></li>
+    </ul>
+    <div class="nav-right">
+      <a class="btn btn-primary" href="#menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14l-1.5 10h-11z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg><span class="txt">Order</span></a>
+      <button class="menu-btn" type="button" id="menu-btn" aria-expanded="false" aria-controls="drawer" aria-label="Open menu">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </nav>
+  <div class="drawer" id="drawer" hidden>
+    <a href="#menu">Menu</a><a href="#about">About</a><a href="#reviews">Reviews</a><a href="#visit">Hours &amp; location</a>
+  </div>
+</div>
+
+<main id="top">
+  <section class="hero" aria-labelledby="hero-h">
+    <div class="wrap">
+      <div class="hero-text">
+        <span class="open" id="open-pill"><span class="dot" aria-hidden="true"></span><span id="open-text">Open until 1 am</span></span>
+        <h1 id="hero-h">Hot slices on <em>Yonge</em> till late.</h1>
+        <p class="lede">Hand-stretched pizza by the slice or the pie, ready in 15 minutes for pickup or delivery in Midtown.</p>
+        <div class="ctas">
+          <a class="btn btn-primary" href="#menu">See the menu
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg></a>
+          <a class="btn btn-ghost" href="tel:+14165550142">Call 416-555-0142</a>
+        </div>
+        <div class="quick">
+          <span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Ready in 15 min</span>
+          <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Yonge St &amp; St Clair</span>
+        </div>
+      </div>
+      <div class="art" aria-hidden="true">
+        <div class="block"></div>
+        <svg class="pie" id="hero-pie" viewBox="0 0 200 200"></svg>
+        <span class="sticker">$4 slices</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="strip" role="list">
+    <div class="wrap">
+      <div role="listitem"><b>15 min</b><span>average pickup time</span></div>
+      <div role="listitem"><b>$4</b><span>cheese slice, all day</span></div>
+      <div role="listitem"><b>1 am</b><span>closing, 3 am on weekends</span></div>
+      <div role="listitem"><b>4.7</b><span>average rating</span></div>
+    </div>
+  </div>
+
+  <section class="sec" id="menu" aria-labelledby="menu-h">
+    <div class="wrap">
+      <div class="head">
+        <span class="label">Menu</span>
+        <h2 id="menu-h">Pick your pizza</h2>
+        <p>Pick a size from Small to X-Large and a hand-tossed or thin crust. Listed prices are for a Medium 12″ pie. Tap Add to build your order.</p>
+      </div>
+      <div class="tabs" role="tablist" aria-label="Menu categories" id="tabs"></div>
+      <div class="grid" id="grid" role="tabpanel" aria-labelledby="tab-classics"></div>
+    </div>
+  </section>
+
+  <section class="sec" id="about" aria-labelledby="about-h" style="background:var(--surface);border-block:1px solid var(--line)">
+    <div class="wrap about">
+      <div class="head">
+        <span class="label">About us</span>
+        <h2 id="about-h">A neighbourhood pizza counter</h2>
+      </div>
+      <div class="about-text">
+        <p>Yonge Slice is a small counter shop that does one thing well: fresh pizza, fast.</p>
+        <p>Our dough rests for 48 hours, we grate our own mozzarella every morning, and every pie comes out of the oven in about eight minutes. Grab a slice on the way home or order a pie for the whole floor.</p>
+        <ul class="steps">
+          <li><b>48 h</b><span>dough rest</span></li>
+          <li><b>8 min</b><span>in the oven</span></li>
+          <li><b>12 in</b><span>every pie</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="reviews" aria-labelledby="rev-h">
+    <div class="wrap">
+      <div class="rev-head">
+        <div class="head">
+          <span class="label">Reviews</span>
+          <h2 id="rev-h">What regulars say</h2>
+        </div>
+        <div class="score">
+          <b>4.7</b>
+          <div><span class="stars" aria-label="4.7 out of 5 stars" id="score-stars"></span><small>Sample reviews for this concept</small></div>
+        </div>
+      </div>
+      <div class="rail" id="rail" tabindex="0" aria-label="Customer reviews, scroll sideways for more"></div>
+      <div class="pager">
+        <button class="x" type="button" id="prev" aria-label="Previous review"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <button class="x" type="button" id="next" aria-label="Next review"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+        <div class="dots" id="dots"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="visit" aria-labelledby="visit-h" style="padding-top:0">
+    <div class="wrap">
+      <div class="head">
+        <span class="label">Visit</span>
+        <h2 id="visit-h">Hours and location</h2>
+      </div>
+      <div class="visit">
+        <div class="card">
+          <div class="map" aria-hidden="true">
+            <svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice">
+              <rect width="320" height="200" fill="var(--soft)"/>
+              <g stroke="var(--line)" stroke-width="10"><path d="M0 60H320M0 140H320M70 0V200M250 0V200"/></g>
+              <path d="M160 0V200" stroke="var(--crust)" stroke-width="16"/>
+              <path d="M0 100H320" stroke="var(--crust)" stroke-width="12" opacity=".7"/>
+              <text x="168" y="20" font-family="Nunito,sans-serif" font-size="11" font-weight="800" fill="var(--muted)">YONGE ST</text>
+              <text x="10" y="92" font-family="Nunito,sans-serif" font-size="11" font-weight="800" fill="var(--muted)">ST CLAIR AVE</text>
+              <circle cx="186" cy="120" r="16" fill="var(--primary)"/><circle cx="186" cy="120" r="6" fill="var(--surface)"/>
+            </svg>
+          </div>
+          <p class="addr">Yonge St &amp; St Clair Ave, Toronto<small>Southeast corner, two minutes from St Clair station</small></p>
+          <div class="ctas">
+            <a class="btn btn-primary" href="https://www.google.com/maps/search/?api=1&query=Yonge+St+and+St+Clair+Ave+Toronto" target="_blank" rel="noopener">Get directions
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+            <a class="btn btn-ghost" href="tel:+14165550142">416-555-0142</a>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Opening hours</h3>
+          <table class="hours" id="hours">
+            <caption class="sample" style="text-align:left;caption-side:bottom;padding-top:.75rem">Delivery stops 30 minutes before closing.</caption>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span><b>Yonge Slice</b> · Yonge St &amp; St Clair Ave, Toronto</span>
+    <span>Yonge Slice is a fictional pizza shop, designed and built by Geo T George as a portfolio project. Prices, reviews and the phone number are examples.</span>
+  </div>
+</footer>
+
+<div class="bar" id="bar" hidden>
+  <button class="btn btn-primary" type="button" id="bar-btn"><span id="bar-count">View order</span><span id="bar-total">$0.00</span></button>
+</div>
+
+<dialog class="order" id="order" aria-labelledby="o-title">
+  <div class="o-in">
+    <div class="o-top"><h3 id="o-title" style="font-size:1.5rem">Your order</h3>
+      <button class="x" type="button" id="o-close" aria-label="Close order"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <ul class="o-list" id="o-list"></ul>
+    <div class="o-tot"><span>Total before tax</span><span id="o-total">$0.00</span></div>
+    <p class="o-note">This is a demo shop, so online checkout is turned off. A real version would take payment here or send the order to the kitchen.</p>
+    <button class="btn btn-ghost" type="button" id="o-clear">Clear order</button>
+  </div>
+</dialog>
+
+<script>
+(function(){
+  /* ---------- pizza drawings (original SVG) ---------- */
+  function pie(t){
+    var s = '<circle cx="100" cy="100" r="92" fill="var(--crust)"/><circle cx="100" cy="100" r="80" fill="var(--sauce)"/>';
+    if (t.cheese!==false) s += '<circle cx="100" cy="100" r="74" fill="var(--cheese)"/>';
+    var seed = t.seed||1; function rnd(){ seed = (seed*9301+49297)%233280; return seed/233280; }
+    (t.tops||[]).forEach(function(top){
+      for (var i=0;i<top.n;i++){
+        var a = rnd()*Math.PI*2, r = 12 + rnd()*54, x = 100+Math.cos(a)*r, y = 100+Math.sin(a)*r;
+        if (top.k==='pep') s += '<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="9" fill="#B3261E"/><circle cx="'+(x-2).toFixed(1)+'" cy="'+(y-2).toFixed(1)+'" r="2.5" fill="#D9553F"/>';
+        if (top.k==='basil') s += '<ellipse cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" rx="8" ry="4.5" fill="#2F7D32" transform="rotate('+(rnd()*180).toFixed(0)+' '+x.toFixed(1)+' '+y.toFixed(1)+')"/>';
+        if (top.k==='mush') s += '<path d="M'+(x-7).toFixed(1)+' '+y.toFixed(1)+'a7 6 0 0 1 14 0z" fill="#C9B79C"/><rect x="'+(x-2).toFixed(1)+'" y="'+y.toFixed(1)+'" width="4" height="6" rx="1" fill="#B39E80"/>';
+        if (top.k==='olive') s += '<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="5" fill="none" stroke="#2B2B2B" stroke-width="3"/>';
+        if (top.k==='pepper') s += '<path d="M'+(x-8).toFixed(1)+' '+y.toFixed(1)+'q8 -8 16 0" fill="none" stroke="#3A9D3A" stroke-width="4" stroke-linecap="round"/>';
+        if (top.k==='pine') s += '<rect x="'+(x-5).toFixed(1)+'" y="'+(y-5).toFixed(1)+'" width="10" height="10" rx="2" fill="#F5D44B" transform="rotate(20 '+x.toFixed(1)+' '+y.toFixed(1)+')"/>';
+        if (top.k==='ham') s += '<rect x="'+(x-6).toFixed(1)+'" y="'+(y-6).toFixed(1)+'" width="12" height="12" rx="3" fill="#E58C8C"/>';
+        if (top.k==='onion') s += '<path d="M'+(x-7).toFixed(1)+' '+y.toFixed(1)+'a7 7 0 0 1 14 0" fill="none" stroke="#B57AB8" stroke-width="3"/>';
+      }
+    });
+    return s;
+  }
+  function side(k){
+    if (k==='knots') return '<circle cx="70" cy="110" r="30" fill="var(--crust)"/><circle cx="130" cy="110" r="30" fill="var(--crust)"/><circle cx="100" cy="70" r="30" fill="var(--crust)"/><path d="M55 105q15-15 30 0M115 105q15-15 30 0M85 65q15-15 30 0" stroke="#FFF3D6" stroke-width="5" fill="none" stroke-linecap="round"/>';
+    if (k==='wings') return '<ellipse cx="80" cy="95" rx="34" ry="22" fill="#C2561B" transform="rotate(-20 80 95)"/><ellipse cx="125" cy="115" rx="34" ry="22" fill="#B8481A" transform="rotate(15 125 115)"/><circle cx="100" cy="150" r="16" fill="#F3EEE4"/>';
+    if (k==='salad') return '<circle cx="100" cy="110" r="70" fill="#F3EEE4"/><circle cx="85" cy="100" r="22" fill="#4E9A3B"/><circle cx="120" cy="95" r="20" fill="#68B04F"/><circle cx="105" cy="125" r="20" fill="#3F8A31"/><circle cx="125" cy="125" r="8" fill="#D9442A"/><circle cx="80" cy="128" r="7" fill="#D9442A"/>';
+    if (k==='pop') return '<rect x="70" y="40" width="60" height="120" rx="14" fill="#D9442A"/><rect x="70" y="80" width="60" height="30" fill="#FFF3D6"/><rect x="82" y="30" width="36" height="14" rx="4" fill="#9CA3AF"/>';
+    if (k==='water') return '<path d="M85 30h30v18l12 16v96a10 10 0 0 1-10 10H83a10 10 0 0 1-10-10V64l12-16z" fill="#BFDBFE"/><rect x="73" y="90" width="54" height="30" fill="#3B82F6"/>';
+    if (k==='cookie') return '<circle cx="100" cy="105" r="62" fill="#D59A55"/><circle cx="80" cy="90" r="7" fill="#4A2C17"/><circle cx="115" cy="85" r="6" fill="#4A2C17"/><circle cx="105" cy="120" r="7" fill="#4A2C17"/><circle cx="75" cy="125" r="5" fill="#4A2C17"/><circle cx="130" cy="115" r="5" fill="#4A2C17"/>';
+    if (k==='cannoli') return '<rect x="40" y="85" width="120" height="40" rx="20" fill="#E3B26E" transform="rotate(-15 100 105)"/><circle cx="45" cy="117" r="17" fill="#FFF8EC"/><circle cx="155" cy="88" r="17" fill="#FFF8EC"/>';
+    return '';
+  }
+  document.getElementById('hero-pie').innerHTML = pie({seed:7,tops:[{k:'pep',n:9},{k:'basil',n:7},{k:'mush',n:5}]});
+
+  /* ---------- menu data (example prices, CAD) ---------- */
+  var menu = {
+    Classics:[
+      {id:'deluxe',n:'Deluxe',d:'Pepperoni, sausage, mushrooms, green peppers, onion.',p:19.49,art:{seed:21,tops:[{k:'pep',n:6},{k:'mush',n:5},{k:'pepper',n:5},{k:'onion',n:4}]},tag:'Popular'},
+      {id:'meat',n:'Meat Stack',d:'Pepperoni, ham, sausage, beef and bacon.',p:20.99,art:{seed:23,tops:[{k:'pep',n:8},{k:'ham',n:7}]}},
+      {id:'works',n:'The Works',d:'Six meats and five veggies on one pie.',p:21.99,art:{seed:25,tops:[{k:'pep',n:6},{k:'ham',n:4},{k:'mush',n:4},{k:'pepper',n:4},{k:'olive',n:4},{k:'onion',n:3}]}},
+      {id:'pep2',n:'Double Pepperoni',d:'Two layers of cup-and-char pepperoni.',p:18.99,art:{seed:5,tops:[{k:'pep',n:14}]},tag:'Bestseller'},
+      {id:'pepov',n:'Pepperoni Overload',d:'Extra pepperoni, extra cheese, parmesan.',p:19.49,art:{seed:27,tops:[{k:'pep',n:18}]}},
+      {id:'canadian',n:'Canadian',d:'Pepperoni, mushrooms and bacon.',p:18.99,art:{seed:29,tops:[{k:'pep',n:7},{k:'mush',n:6}]}},
+      {id:'haw',n:'Hawaiian',d:'Smoked ham and pineapple.',p:18.49,art:{seed:11,tops:[{k:'ham',n:8},{k:'pine',n:8}]}},
+      {id:'philly',n:'Philly Steak',d:'Shaved steak, onions, green peppers, provolone.',p:20.49,art:{seed:31,tops:[{k:'ham',n:6},{k:'onion',n:6},{k:'pepper',n:5}]}},
+      {id:'slice',n:'Cheese Slice',d:'One big slice, ready right now.',p:3.99,size:'Slice',art:{seed:2,tops:[]},tag:'$4'}
+    ],
+    Chicken:[
+      {id:'bbq',n:'BBQ Chicken Bacon',d:'Grilled chicken, bacon, onion, smoky BBQ sauce.',p:19.99,art:{seed:33,tops:[{k:'ham',n:6},{k:'pep',n:4},{k:'onion',n:5}]}},
+      {id:'alfredo',n:'Chicken Bacon Alfredo',d:'Creamy alfredo base, chicken, bacon, spinach.',p:20.49,art:{seed:35,tops:[{k:'ham',n:6},{k:'basil',n:6}]}},
+      {id:'hhranch',n:'Hot Honey Chicken Ranch',d:'Chicken, bacon, jalapeños, ranch and hot honey.',p:20.49,art:{seed:37,tops:[{k:'ham',n:6},{k:'pepper',n:6}]},tag:'Spicy'},
+      {id:'cbranch',n:'Chicken Bacon Ranch',d:'Chicken, bacon, tomato and ranch drizzle.',p:19.99,art:{seed:39,tops:[{k:'ham',n:7},{k:'pep',n:4}]}}
+    ],
+    Veggie:[
+      {id:'roastveg',n:'Roasted Veggie',d:'Roasted red peppers, spinach, onion, feta, tomato.',p:18.99,art:{seed:41,tops:[{k:'pepper',n:6},{k:'basil',n:6},{k:'onion',n:4}]}},
+      {id:'six',n:'Six Cheese',d:'Mozzarella, provolone, cheddar, parmesan, feta, asiago.',p:18.99,art:{seed:43,tops:[]}},
+      {id:'spinfeta',n:'Spinach and Feta',d:'Spinach, feta, garlic, creamy white base.',p:18.49,art:{seed:45,tops:[{k:'basil',n:12}]}},
+      {id:'veg',n:'Veggie',d:'Mushrooms, green peppers, onion, olives, tomato.',p:17.99,art:{seed:9,tops:[{k:'mush',n:6},{k:'pepper',n:6},{k:'onion',n:5},{k:'olive',n:5}]}},
+      {id:'marg',n:'Margherita',d:'Tomato, fresh mozzarella, basil, olive oil.',p:16.99,art:{seed:3,tops:[{k:'basil',n:8}]},tag:'Classic'}
+    ],
+    Sides:[
+      {id:'knots',n:'Garlic Knots',d:'Six knots, garlic butter, parmesan.',p:6.49,size:'6 pcs',art:'knots'},
+      {id:'wings',n:'Honey Hot Wings',d:'Ten wings with ranch on the side.',p:13.99,size:'10 pcs',art:'wings'},
+      {id:'salad',n:'House Salad',d:'Greens, cherry tomato, lemon dressing.',p:7.99,art:'salad'}
+    ],
+    Drinks:[
+      {id:'pop',n:'Can of Pop',d:'Cola, lemon-lime or orange.',p:1.99,size:'355 ml',art:'pop'},
+      {id:'water',n:'Sparkling Water',d:'Lightly carbonated, no sugar.',p:2.49,size:'500 ml',art:'water'}
+    ],
+    Desserts:[
+      {id:'cookie',n:'Choc Chunk Cookie',d:'Baked fresh every afternoon.',p:2.99,art:'cookie'},
+      {id:'cannoli',n:'Mini Cannoli',d:'Two shells, ricotta and orange zest.',p:5.49,size:'2 pcs',art:'cannoli'}
+    ]
+  };
+  var byId = {}; Object.keys(menu).forEach(function(c){ menu[c].forEach(function(i){ byId[i.id]=i; }); });
+  /* sizes and crusts for pies: Medium is the listed price */
+  var SIZES = [{l:'Small',in:10,d:-3},{l:'Medium',in:12,d:0},{l:'Large',in:14,d:3},{l:'X-Large',in:16,d:6}];
+  var CRUSTS = ['Hand Tossed','Thin Crust'];
+  function isPie(i){ return ['Classics','Chicken','Veggie'].some(function(c){ return menu[c].indexOf(i)>-1; }) && i.id!=='slice'; }
+  function sizePrice(i,l){ var z = SIZES.filter(function(x){return x.l===l;})[0]||SIZES[1]; return Math.round((i.p+z.d)*100)/100; }
+  var sel = {}; /* remembers each card's chosen size and crust */
+  function pick(i){ if (!sel[i.id]) sel[i.id] = {size:'Medium', crust:'Hand Tossed'}; return sel[i.id]; }
+  var cart = {}; /* key: id|size|crust -> qty */
+  try { cart = JSON.parse(localStorage.getItem('ys-cart-v2')||'{}') || {}; } catch(e){ cart = {}; }
+  function save(){ try { localStorage.setItem('ys-cart-v2', JSON.stringify(cart)); } catch(e){} }
+  function keyFor(i){ if (!isPie(i)) return i.id; var p = pick(i); return i.id+'|'+p.size+'|'+p.crust; }
+  function lineOf(k){ var parts = k.split('|'), i = byId[parts[0]]; if (!i) return null;
+    return parts.length>1 ? {name:i.n+' \u00b7 '+parts[1]+', '+parts[2], price:sizePrice(i,parts[1])} : {name:i.n, price:i.p}; }
+  var money = function(v){ return '$' + v.toFixed(2); };
+
+  var tabs = document.getElementById('tabs'), grid = document.getElementById('grid'), active = 'Pizza';
+  Object.keys(menu).forEach(function(c){
+    var b = document.createElement('button'); b.className='tab'; b.type='button'; b.setAttribute('role','tab');
+    b.id = 'tab-' + c.toLowerCase(); b.textContent = c; b.setAttribute('aria-controls','grid');
+    b.addEventListener('click', function(){ select(c); });
+    b.addEventListener('keydown', function(e){
+      var keys = Object.keys(menu), i = keys.indexOf(c);
+      if (e.key==='ArrowRight'){ e.preventDefault(); select(keys[(i+1)%keys.length], true); }
+      if (e.key==='ArrowLeft'){ e.preventDefault(); select(keys[(i-1+keys.length)%keys.length], true); }
+    });
+    tabs.appendChild(b);
+  });
+  function select(c, focus){
+    active = c;
+    [].forEach.call(tabs.children, function(b){ var on = b.textContent===c; b.setAttribute('aria-selected', on); b.tabIndex = on?0:-1; if (on && focus) b.focus(); });
+    grid.setAttribute('aria-labelledby','tab-'+c.toLowerCase());
+    render();
+  }
+  function pickers(i){
+    if (!isPie(i)) return '';
+    var p = pick(i);
+    return '<div class="pick">'+
+      '<label class="sr-only" for="sz-'+i.id+'">Size for '+i.n+'</label><select id="sz-'+i.id+'" data-size="'+i.id+'">'+SIZES.map(function(z){ return '<option value="'+z.l+'"'+(z.l===p.size?' selected':'')+'>'+z.l+' '+z.in+'\u2033</option>'; }).join('')+'</select>'+
+      '<label class="sr-only" for="cr-'+i.id+'">Crust for '+i.n+'</label><select id="cr-'+i.id+'" data-crust="'+i.id+'">'+CRUSTS.map(function(c){ return '<option'+(c===p.crust?' selected':'')+'>'+c+'</option>'; }).join('')+'</select></div>';
+  }
+  function control(i){
+    var q = cart[keyFor(i)]||0;
+    if (!q) return '<button class="add" type="button" data-add="'+i.id+'" aria-label="Add '+i.n+' to order">Add</button>';
+    return '<span class="qty"><button type="button" data-dec="'+i.id+'" aria-label="Remove one '+i.n+'">−</button><output aria-live="polite" aria-label="'+i.n+' quantity">'+q+'</output><button type="button" data-add="'+i.id+'" aria-label="Add another '+i.n+'">+</button></span>';
+  }
+  function render(){
+    grid.innerHTML = menu[active].map(function(i){
+      var art = typeof i.art === 'string' ? side(i.art) : pie(i.art);
+      return '<article class="item"><div class="thumb" aria-hidden="true"><svg viewBox="0 0 200 200">'+art+'</svg></div>'+
+        '<div class="item-body"><h3>'+i.n+(i.tag?'<span class="tag">'+i.tag+'</span>':'')+'</h3><p>'+i.d+'</p>'+
+        pickers(i)+'<div class="item-foot"><div><span class="price" data-price="'+i.id+'">'+money(isPie(i)?sizePrice(i,pick(i).size):i.p)+'</span> <span class="size">'+(isPie(i)?'':(i.size||''))+'</span></div><div data-ctl="'+i.id+'">'+control(i)+'</div></div></div></article>';
+    }).join('');
+    updateBar();
+  }
+  grid.addEventListener('click', function(e){
+    var a = e.target.closest('[data-add]'), d = e.target.closest('[data-dec]'), id;
+    var k;
+    if (a){ id = a.getAttribute('data-add'); k = keyFor(byId[id]); cart[k] = (cart[k]||0)+1; }
+    else if (d){ id = d.getAttribute('data-dec'); k = keyFor(byId[id]); cart[k] = (cart[k]||0)-1; if (cart[k]<=0) delete cart[k]; }
+    else return;
+    save(); refresh(id, true);
+  });
+  function refresh(id, focus){
+    var box = grid.querySelector('[data-ctl="'+id+'"]'); if (!box) return;
+    box.innerHTML = control(byId[id]);
+    var pr = grid.querySelector('[data-price="'+id+'"]'); if (pr) pr.textContent = money(sizePrice(byId[id], pick(byId[id]).size));
+    if (focus){ var again = box.querySelector('[data-add]'); if (again) again.focus(); }
+    updateBar();
+  }
+  grid.addEventListener('change', function(e){
+    var sz = e.target.getAttribute('data-size'), cr = e.target.getAttribute('data-crust');
+    if (sz){ pick(byId[sz]).size = e.target.value; refresh(sz); }
+    if (cr){ pick(byId[cr]).crust = e.target.value; refresh(cr); }
+  });
+  var bar = document.getElementById('bar');
+  function totals(){ var n=0,t=0; Object.keys(cart).forEach(function(k){ var L=lineOf(k); if (!L) return; n+=cart[k]; t+=cart[k]*L.price; }); return {n:n,t:t}; }
+  function updateBar(){
+    var s = totals();
+    bar.hidden = s.n===0;
+    document.getElementById('bar-count').textContent = 'View order (' + s.n + ' item' + (s.n===1?'':'s') + ')';
+    document.getElementById('bar-total').textContent = money(s.t);
+    document.documentElement.style.setProperty('--bar-h', s.n && innerWidth < 860 ? '84px' : '0px');
+  }
+  var dlg = document.getElementById('order');
+  document.getElementById('bar-btn').addEventListener('click', function(){
+    var s = totals();
+    document.getElementById('o-list').innerHTML = Object.keys(cart).map(function(k){ var L=lineOf(k); if (!L) return ''; return '<li><span>'+cart[k]+' \u00d7 '+L.name+'</span><span>'+money(cart[k]*L.price)+'</span></li>'; }).join('');
+    document.getElementById('o-total').textContent = money(s.t);
+    dlg.showModal(); document.getElementById('o-close').focus();
+  });
+  document.getElementById('o-close').addEventListener('click', function(){ dlg.close(); });
+  dlg.addEventListener('click', function(e){ if (e.target===dlg) dlg.close(); });
+  dlg.addEventListener('close', function(){ document.getElementById('bar-btn').focus(); });
+  document.getElementById('o-clear').addEventListener('click', function(){ cart={}; save(); dlg.close(); render(); });
+  window.addEventListener('resize', updateBar);
+  select('Classics');
+
+  /* ---------- drawer ---------- */
+  var mb = document.getElementById('menu-btn'), drawer = document.getElementById('drawer');
+  mb.addEventListener('click', function(){ var open = drawer.hidden; drawer.hidden = !open; mb.setAttribute('aria-expanded', open); mb.setAttribute('aria-label', open?'Close menu':'Open menu'); });
+  drawer.addEventListener('click', function(e){ if (e.target.closest('a')){ drawer.hidden = true; mb.setAttribute('aria-expanded','false'); mb.setAttribute('aria-label','Open menu'); } });
+
+  /* ---------- reviews ---------- */
+  var star = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z"/></svg>';
+  document.getElementById('score-stars').innerHTML = star.repeat(5);
+  var reviews = [
+    {n:'Priya',w:'Lives nearby',s:5,t:'The double pepperoni is the best I’ve had on Yonge. Ready before I finished parking.'},
+    {n:'Marcus',w:'Late-night regular',s:5,t:'Open till 3 on Saturdays and the slices are still fresh. Staff remember my order.'},
+    {n:'Hannah',w:'Ordered for the office',s:4,t:'Four pies for our team, all hot, all on time. The garlic knots disappeared first.'},
+    {n:'Daniel',w:'First visit',s:5,t:'Simple menu, fair prices and a $4 slice that actually fills you up.'},
+    {n:'Aisha',w:'Picks up on Fridays',s:5,t:'The online menu is easy to use on my phone and pickup takes fifteen minutes, like it says.'}
+  ];
+  var rail = document.getElementById('rail'), dots = document.getElementById('dots');
+  rail.innerHTML = reviews.map(function(r){ return '<figure class="quote" style="margin:0"><span class="stars" aria-label="'+r.s+' out of 5 stars">'+star.repeat(r.s)+'</span><blockquote style="margin:0"><p>'+r.t+'</p></blockquote><figcaption class="who"><span class="av" aria-hidden="true">'+r.n[0]+'</span><span><b>'+r.n+'</b><small>'+r.w+'</small></span></figcaption></figure>'; }).join('');
+  reviews.forEach(function(r,i){ var b=document.createElement('button'); b.type='button'; b.setAttribute('aria-label','Go to review '+(i+1)); b.addEventListener('click',function(){ go(i); }); dots.appendChild(b); });
+  function cardW(){ var c = rail.children[0]; return c ? c.getBoundingClientRect().width + 16 : 300; }
+  function idx(){ return Math.round(rail.scrollLeft / cardW()); }
+  function go(i){ i = Math.max(0, Math.min(reviews.length-1, i)); rail.scrollTo({left:i*cardW(), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'}); }
+  function mark(){ var k = idx(); [].forEach.call(dots.children, function(d,i){ d.setAttribute('aria-current', i===k); }); }
+  rail.addEventListener('scroll', function(){ requestAnimationFrame(mark); }, {passive:true});
+  document.getElementById('prev').addEventListener('click', function(){ go(idx()-1); });
+  document.getElementById('next').addEventListener('click', function(){ go(idx()+1); });
+  mark();
+
+  /* ---------- hours + open now (Toronto time) ---------- */
+  var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var hrs = {0:[11,24],1:[11,25],2:[11,25],3:[11,25],4:[11,25],5:[11,27],6:[11,27]};
+  function fmt(h){ h = h%24; var ap = h>=12?'pm':'am', x = h%12||12; return x + ' ' + ap; }
+  var now = new Date(new Date().toLocaleString('en-US',{timeZone:'America/Toronto'}));
+  var dow = now.getDay(), hr = now.getHours() + now.getMinutes()/60;
+  var order = [1,2,3,4,5,6,0];
+  document.querySelector('#hours tbody').innerHTML = order.map(function(d){ return '<tr'+(d===dow?' class="today"':'')+'><th scope="row">'+days[d]+(d===dow?' (today)':'')+'</th><td>'+fmt(hrs[d][0])+' – '+fmt(hrs[d][1])+'</td></tr>'; }).join('');
+  var y = (dow+6)%7, openNow = false, until = null;
+  if (hr < hrs[y][1]-24){ openNow = true; until = hrs[y][1]; }
+  else if (hr >= hrs[dow][0] && hr < hrs[dow][1]){ openNow = true; until = hrs[dow][1]; }
+  var pill = document.getElementById('open-pill'), txt = document.getElementById('open-text');
+  if (openNow){ txt.textContent = 'Open now until ' + fmt(until); }
+  else { pill.classList.add('closed'); txt.textContent = 'Closed now, opens at ' + fmt(hrs[dow][0]); }
+})();
+</script>
+
+</body>
+</html>
