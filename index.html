@@ -163,6 +163,7 @@ dialog.viewer::backdrop{background:rgba(9,9,11,.72)}
 
 /* about */
 .sec .wrap.about{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:clamp(2rem,6vw,5rem);align-items:start}
+.portrait{width:min(17rem,100%);height:auto;aspect-ratio:1/1;object-fit:cover;border-radius:16px;border:1px solid var(--line);margin-top:1rem;display:block}
 .about-text{display:flex;flex-direction:column;gap:1rem;max-width:60ch}
 .about-text p{color:var(--muted)}
 .about-text p:first-child{color:var(--ink);font-size:1.25rem;line-height:1.5}
@@ -250,6 +251,7 @@ footer .wrap{padding-block:2rem 2.5rem;display:flex;flex-wrap:wrap;justify-conte
       <div class="sec-head">
         <span class="label">About</span>
         <h2 id="about-h">Design that starts with the customer</h2>
+        <img class="portrait" src="geo.jpg" alt="Geo T George, smiling, in a grey blazer" width="640" height="640" loading="lazy" decoding="async">
       </div>
       <div class="about-text">
         <p>I'm Geo, a web designer in Toronto. I studied Computer Programming at Seneca Polytechnic and build sites with AI coding tools.</p>
@@ -390,9 +392,9 @@ footer .wrap{padding-block:2rem 2.5rem;display:flex;flex-wrap:wrap;justify-conte
     {title:'Yonge Slice', kind:'Pizza shop website', tag:'Live', cls:'p2', img:'yonge-slice/thumb.png', alt:'Homepage of the Yonge Slice pizza shop site', url:'https://geo2002.github.io/yonge-slice/',
      desc:'A phone-first site for a neighbourhood pizza shop, with a full menu and a working order builder. Yonge Slice is a fictional brand I designed from five years of managing a busy pizza store.',
      points:['Menu tabs with size and crust pickers that update the price','Order bar that sticks to the bottom of the phone screen','Live open or closed status in Toronto time, plus hours and directions']},
-    {title:'Northline Dental', kind:'Clinic booking page', tag:'Concept', cls:'p3',
-     desc:'A calm booking page for a neighbourhood clinic, with open times shown up front.',
-     points:['Booking calendar on the first screen','Insurance and new-patient questions answered in plain words','Large tap targets for older patients']},
+    {title:'Resume', kind:'Geo T George \u00b7 PDF and Word', tag:'Live', cls:'p3', img:'resume/thumb.png', url:'https://geo2002.github.io/resume/', link:'View my resume',
+     desc:'My one-page resume: five years of retail management, a Computer Programming diploma from Seneca, and my web projects.',
+     points:['Store Manager leading a team of 12 and about $22,000 in weekly sales','Diploma in Computer Programming, Seneca Polytechnic','Download it as a PDF or a Word file']},
     {title:'Fern & Stem', kind:'Florist landing page', tag:'Concept', cls:'p4',
      desc:'One focused page for a florist’s Mother’s Day orders.',
      points:['A single action: order a bouquet','Delivery cut-off time shown next to the button','Photos sized to load fast on mobile data']}
@@ -430,7 +432,7 @@ footer .wrap{padding-block:2rem 2.5rem;display:flex;flex-wrap:wrap;justify-conte
     document.getElementById('v-desc').textContent = p.desc;
     document.getElementById('v-points').innerHTML = p.points.map(function(x){return '<li>'+x+'</li>';}).join('');
     var link = document.getElementById('v-link');
-    if (p.url){ link.href = p.url; link.hidden = false; } else { link.hidden = true; }
+    if (p.url){ link.href = p.url; link.hidden = false; link.firstChild.textContent = (p.link || 'Visit the site') + ' '; } else { link.hidden = true; }
     document.getElementById('v-count').textContent = (cur+1) + ' / ' + projects.length;
   }
   function openViewer(i, from){
