@@ -1244,7 +1244,7 @@ tt.onclick = () => goTo("#home");
     $("#roomList").style.display = d.resume ? "none" : "";
     if (d.resume) $("#roomGrid").innerHTML = resumeHTML();
     else $("#roomGrid").innerHTML = d.projects.length ? d.projects.map(p => `<a class="proj" href="${p.url}" ${p.url !== "#" ? 'target="_blank" rel="noopener"' : ""}><div class="proj__m${p.art ? " proj__m--art" : ""}">${p.img ? `<img src="${p.img}" alt="">` : p.art ? p.art : p.m}</div><div class="proj__b"><div><h3>${p.t}</h3><p>${p.d}</p></div><span class="go">↗</span></div></a>`).join("")
-      : `<div class="proj" style="grid-column:1/-1;padding:1.6rem"><p style="color:var(--muted)">Want this kind of reliability on your project? <a href="#" class="js-hire" style="color:var(--fg);text-decoration:underline">Let's talk.</a></p></div>`;
+      : "";
     $$("#roomGrid .js-hire").forEach(b => b.addEventListener("click", openModal));
     const pr = $("#resPrint"), dn = $("#resDown");
     if (dn) dn.onclick = downloadResume;
