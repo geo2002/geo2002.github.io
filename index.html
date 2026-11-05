@@ -495,6 +495,12 @@ html[data-mode="dark"] .totop{background:#EDE7E3;color:#141212}
 .chips button.on{background:var(--fg);color:var(--bg);border-color:var(--fg)}
 .hp{position:absolute;left:-9999px}
 .msuccess{display:none}
+.mdirect{display:grid;grid-template-columns:minmax(0,1fr);gap:.6rem;margin-top:2.6rem;padding-top:1.8rem;border-top:1px solid var(--line)}
+.mdirect__h{font-family:var(--mono);font-size:.68rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.2rem}
+.mdirect .about__link{min-width:0}
+.mdirect .about__link span:nth-child(2){white-space:normal;overflow-wrap:anywhere}
+.mdirect__copy{justify-self:start;margin:-.15rem 0 .35rem .2rem;font-size:.8rem;color:var(--muted);text-decoration:underline;text-underline-offset:3px}
+.mdirect__copy:hover{color:var(--fg)}
 .modal.sent .mform-wrap{display:none}
 .modal.sent .msuccess{display:block}
 
@@ -785,6 +791,12 @@ html[data-mode="dark"] .totop{background:#EDE7E3;color:#141212}
       <p style="color:var(--muted);margin:1.4rem 0 2rem;max-width:36ch">Your email app should have opened with your message ready to go. Press send there and I'll reply within a day.</p>
       <p style="font-size:.9rem">Didn't open? Email <a class="js-mail" style="text-decoration:underline"></a></p>
       <button class="pill pill--outline" id="mDone" style="margin-top:2rem">Done</button>
+    </div>
+    <div class="mdirect">
+      <p class="mdirect__h">Or reach me directly</p>
+      <a class="about__link" href="mailto:geotgeorge4@gmail.com"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 6.5 8.5 6.5 8.5-6.5"/></svg></span><span><small>Email</small>geotgeorge4@gmail.com</span><span class="go">↗</span></a>
+      <button class="mdirect__copy" id="copyMail" type="button">Copy email address</button>
+      <a class="about__link" href="https://www.linkedin.com/in/geo-t-george4" target="_blank" rel="noopener"><span class="ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.75h4v10.75H3zM9.5 9.75h3.8v1.5h.06c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.77 2.6 4.77 6v5.3h-4v-4.7c0-1.12-.02-2.56-1.56-2.56-1.56 0-1.8 1.22-1.8 2.48v4.78h-4z"/></svg></span><span><small>LinkedIn</small>linkedin.com/in/geo-t-george4</span><span class="go">↗</span></a>
     </div>
   </div>
 </div>
@@ -1453,7 +1465,11 @@ const modal = $("#modal");
 function openModal(e){ e && e.preventDefault(); closeMenu(); modal.classList.remove("sent"); modal.classList.add("open"); lenis && lenis.stop(); setTimeout(() => modal.querySelector("input[name=name]").focus(), 350); }
 function closeModal(){ modal.classList.remove("open"); if (!$("#room").classList.contains("open")) lenis && lenis.start(); }
 $$(".js-hire").forEach(b => b.addEventListener("click", openModal));
-$("#mClose").onclick = closeModal; $("#mDone").onclick = closeModal;
+$("#mClose").onclick = closeModal;
+$("#copyMail").onclick = e => {
+  const b = e.currentTarget, done = () => { b.textContent = "Copied ✓"; setTimeout(() => b.textContent = "Copy email address", 1800); };
+  (navigator.clipboard ? navigator.clipboard.writeText(EMAIL) : Promise.reject()).then(done, () => { const t = document.createElement("textarea"); t.value = EMAIL; document.body.appendChild(t); t.select(); try { document.execCommand("copy"); done(); } catch (_) {} t.remove(); });
+}; $("#mDone").onclick = closeModal;
 modal.addEventListener("click", e => { if (e.target === modal) closeModal(); });
 addEventListener("keydown", e => { if (e.key === "Escape") { closeModal(); closeMenu(); } });
 $$("#needChips button").forEach(b => b.onclick = () => { $$("#needChips button").forEach(x => x.classList.remove("on")); b.classList.add("on"); });
